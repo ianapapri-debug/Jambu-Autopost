@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+
+{% block title %}Login — Jambu Store Autopost{% endblock %}
+
+{% block auth_content %}
+<div class="auth-page">
+    <div class="auth-bg">
+        <div class="auth-orb orb1"></div>
+        <div class="auth-orb orb2"></div>
+        <div class="auth-orb orb3"></div>
+    </div>
+
+    <div class="auth-card">
+        <div class="auth-header">
+            <div class="auth-logo">🍃</div>
+            <h1 class="auth-title">Jambu Store</h1>
+            <p class="auth-subtitle">Autopost Dashboard</p>
+        </div>
+
+        <form method="POST" action="{{ url_for('login') }}" class="auth-form">
+            <div class="form-group">
+                <label class="form-label">Username</label>
+                <div class="input-wrapper">
+                    <span class="input-icon">👤</span>
+                    <input type="text" name="username" class="form-input" placeholder="Masukkan username" autocomplete="username" required>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Password</label>
+                <div class="input-wrapper">
+                    <span class="input-icon">🔑</span>
+                    <input type="password" name="password" class="form-input" placeholder="Masukkan password" autocomplete="current-password" required>
+                </div>
+            </div>
+
+            <button type="submit" class="btn btn-primary btn-full">
+                <span>Masuk</span>
+                <span class="btn-arrow">→</span>
+            </button>
+        </form>
+
+        <div class="auth-footer">
+            <span>Jambu Store Autopost</span>
+        </div>
+    </div>
+</div>
+{% endblock %}

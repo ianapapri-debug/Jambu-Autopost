@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+{% block title %}Dashboard — Jambu Store{% endblock %}
+{% block page_title %}Dashboard{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h1 class="page-h1">Overview</h1>
+    <p class="page-sub">Selamat datang, <strong>{{ session.username }}</strong>. Berikut ringkasan sistem.</p>
+</div>
+
+<div class="stats-grid">
+    <div class="stat-card">
+        <div class="stat-icon" style="background: var(--green-light); color: var(--green);">📡</div>
+        <div class="stat-info">
+            <div class="stat-value">{{ total_channels }}</div>
+            <div class="stat-label">Total Channel</div>
+        </div>
+        <div class="stat-badge active">{{ active_channels }} aktif</div>
+    </div>
+
+    <div class="stat-card">
+        <div class="stat-icon" style="background: #e8f5e9; color: #2e7d32;">🔑</div>
+        <div class="stat-info">
+            <div class="stat-value">{{ total_tokens }}</div>
+            <div class="stat-label">Total Token</div>
+        </div>
+    </div>
+
+    <div class="stat-card">
+        <div class="stat-icon" style="background: #e3f2fd; color: #1565c0;">👥</div>
+        <div class="stat-info">
+            <div class="stat-value">{{ total_users }}</div>
+            <div class="stat-label">Total User</div>
+        </div>
+    </div>
+
+    <div class="stat-card">
+        <div class="stat-icon" style="background: #fff8e1; color: #f57f17;">⚡</div>
+        <div class="stat-info">
+            <div class="stat-value">{{ active_channels }}</div>
+            <div class="stat-label">Autopost Berjalan</div>
+        </div>
+    </div>
+</div>
+
+<div class="section-title">Aktivitas Terakhir</div>
+<div class="card">
+    <div class="log-list">
+        {% if recent_logs %}
+            {% for log in recent_logs %}
+            <div class="log-item">
+                <div class="log-avatar">{{ log.username[0].upper() if log.username else '?' }}</div>
+                <div class="log-body">
+                    <div class="log-action"><strong>{{ log.username }}</strong> — {{ log.action }}</div>
+                    <div class="log-detail">{{ log.detail }}</div>
+                </div>
+                <div class="log-time">{{ log.created_at }}</div>
+            </div>
+            {% endfor %}
+        {% else %}
+            <div class="empty-state">
+                <span>📋</span>
+                <p>Belum ada aktivitas.</p>
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

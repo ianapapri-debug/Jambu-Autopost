@@ -1,0 +1,121 @@
+{% extends "base.html" %}
+{% block title %}Settings — Jambu Store{% endblock %}
+{% block page_title %}Settings{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h1 class="page-h1">Pengaturan</h1>
+    <p class="page-sub">Kelola token Discord dan webhook notifikasi.</p>
+</div>
+
+<!-- Token Section -->
+<div class="card mb-4">
+    <div class="card-header">
+        <span>🔑 Token Discord</span>
+    </div>
+    <div class="card-body">
+        <form method="POST" action="{{ url_for('add_token') }}" class="inline-form">
+            <div class="form-row">
+                <div class="form-group">
+                    <label class="form-label">Nama Token</label>
+                    <input type="text" name="name" class="form-input" placeholder="e.g. Bot Utama" required>
+                </div>
+                <div class="form-group flex-2">
+                    <label class="form-label">Token Discord</label>
+                    <input type="text" name="token" class="form-input mono" placeholder="Bot MTxxxxxxxxxxxxxxx..." required>
+                </div>
+                <div class="form-group form-group-btn">
+                    <label class="form-label">&nbsp;</label>
+                    <button type="submit" class="btn btn-primary">+ Tambah</button>
+                </div>
+            </div>
+        </form>
+
+        {% if tokens %}
+        <div class="token-list">
+            {% for tok in tokens %}
+            <div class="token-item">
+                <div class="token-icon">🔑</div>
+                <div class="token-info">
+                    <div class="token-name">{{ tok.name }}</div>
+                    <div class="token-val mono">{{ tok.token[:20] }}...{{ tok.token[-6:] }}</div>
+                </div>
+                <div class="token-meta">{{ tok.created_at }}</div>
+                <form method="POST" action="{{ url_for('delete_token', tid=tok.id) }}"
+                    onsubmit="return confirm('Hapus token {{ tok.name }}?')">
+                    <button class="btn-icon btn-delete" title="Hapus">🗑</button>
+                </form>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="empty-state small">
+            <span>🔑</span>
+            <p>Belum ada token. Tambahkan di atas.</p>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+<!-- Webhook Section -->
+<div class="card mb-4">
+    <div class="card-header">
+        <span>🪝 Discord Webhook</span>
+    </div>
+    <div class="card-body">
+        <p class="text-muted mb-2">Webhook akan mengirim embed notifikasi setiap kali autopost berhasil atau gagal.</p>
+        <form method="POST" action="{{ url_for('save_webhook') }}">
+            <div class="form-row">
+                <div class="form-group flex-3">
+                    <label class="form-label">Webhook URL</label>
+                    <input type="url" name="webhook" class="form-input mono"
+                        placeholder="https://discord.com/api/webhooks/..."
+                        value="{{ setting.webhook_url if setting else '' }}">
+                </div>
+                <div class="form-group form-group-btn">
+                    <label class="form-label">&nbsp;</label>
+                    <button type="submit" class="btn btn-primary">💾 Simpan</button>
+                </div>
+            </div>
+        </form>
+
+        <div class="info-box mt-3">
+            <div class="info-box-title">📤 Contoh Embed Webhook</div>
+            <div class="embed-preview">
+                <div class="embed-bar" style="background: #4CAF50;"></div>
+                <div class="embed-content">
+                    <div class="embed-title">📨 Autopost Report</div>
+                    <div class="embed-fields">
+                        <div class="embed-field"><span>Token</span> Bot Utama</div>
+                        <div class="embed-field"><span>Status</span> <b style="color:#4CAF50">SUCCESS</b></div>
+                        <div class="embed-field"><span>Channel ID</span> 1234567890</div>
+                        <div class="embed-field"><span>Waktu</span> 2025-01-01 12:00:00</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Change Password -->
+<div class="card">
+    <div class="card-header">
+        <span>🔒 Ganti Password</span>
+    </div>
+    <div class="card-body">
+        <form method="POST" action="{{ url_for('edit_user', uid=session.user_id) }}">
+            <input type="hidden" name="role" value="{{ session.role }}">
+            <div class="form-row">
+                <div class="form-group flex-2">
+                    <label class="form-label">Password Baru</label>
+                    <input type="password" name="password" class="form-input" placeholder="Kosongkan jika tidak ingin mengubah">
+                </div>
+                <div class="form-group form-group-btn">
+                    <label class="form-label">&nbsp;</label>
+                    <button type="submit" class="btn btn-primary">🔒 Update</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

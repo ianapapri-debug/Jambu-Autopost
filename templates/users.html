@@ -1,0 +1,127 @@
+{% extends "base.html" %}
+{% block title %}User Management — Jambu Store{% endblock %}
+{% block page_title %}User Management{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h1 class="page-h1">User Management</h1>
+    <p class="page-sub">Buat, edit, dan hapus akun pengguna.</p>
+</div>
+
+<!-- Add User -->
+<div class="card mb-4">
+    <div class="card-header"><span>👤 Tambah User Baru</span></div>
+    <form method="POST" action="{{ url_for('add_user') }}" class="card-body">
+        <div class="form-row">
+            <div class="form-group">
+                <label class="form-label">Username</label>
+                <input type="text" name="username" class="form-input" placeholder="username" required>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Password</label>
+                <input type="password" name="password" class="form-input" placeholder="password" required>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Role</label>
+                <select name="role" class="form-input">
+                    <option value="user">User</option>
+                    <option value="admin">Admin</option>
+                </select>
+            </div>
+            <div class="form-group form-group-btn">
+                <label class="form-label">&nbsp;</label>
+                <button type="submit" class="btn btn-primary">+ Buat User</button>
+            </div>
+        </div>
+    </form>
+</div>
+
+<!-- User List -->
+<div class="card">
+    <div class="card-header">
+        <span>👥 Daftar User ({{ users|length }})</span>
+    </div>
+    <div class="table-wrapper">
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Username</th>
+                    <th>Role</th>
+                    <th>Dibuat</th>
+                    <th>Aksi</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for u in users %}
+                <tr>
+                    <td>{{ loop.index }}</td>
+                    <td>
+                        <div style="display:flex;align-items:center;gap:8px">
+                            <div class="user-avatar sm">{{ u.username[0].upper() }}</div>
+                            <span>{{ u.username }}</span>
+                            {% if u.id == session.user_id %}<span class="badge-self">Saya</span>{% endif %}
+                        </div>
+                    </td>
+                    <td><span class="user-role {{ u.role }}">{{ u.role }}</span></td>
+                    <td class="text-muted mono">{{ u.created_at }}</td>
+                    <td class="actions-cell">
+                        <button class="btn-icon btn-edit" title="Edit"
+                            onclick="openUserModal({{ u.id }}, '{{ u.username }}', '{{ u.role }}')">✏</button>
+                        {% if u.id != session.user_id %}
+                        <form method="POST" action="{{ url_for('delete_user', uid=u.id) }}" style="display:inline"
+                            onsubmit="return confirm('Hapus user {{ u.username }}?')">
+                            <button type="submit" class="btn-icon btn-delete">🗑</button>
+                        </form>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Edit User Modal -->
+<div class="modal-backdrop" id="userModal">
+    <div class="modal">
+        <div class="modal-header">
+            <span>✏ Edit User: <span id="editUserName"></span></span>
+            <button class="modal-close" onclick="closeUserModal()">×</button>
+        </div>
+        <form method="POST" id="userEditForm">
+            <div class="modal-body">
+                <div class="form-group">
+                    <label class="form-label">Password Baru (kosongkan jika tidak ingin diubah)</label>
+                    <input type="password" name="password" class="form-input" placeholder="Password baru...">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Role</label>
+                    <select name="role" id="editUserRole" class="form-input">
+                        <option value="user">User</option>
+                        <option value="admin">Admin</option>
+                    </select>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-ghost" onclick="closeUserModal()">Batal</button>
+                <button type="submit" class="btn btn-primary">Simpan</button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+function openUserModal(id, username, role) {
+    document.getElementById('editUserName').textContent = username;
+    document.getElementById('editUserRole').value = role;
+    document.getElementById('userEditForm').action = `/users/edit/${id}`;
+    document.getElementById('userModal').classList.add('show');
+}
+function closeUserModal() {
+    document.getElementById('userModal').classList.remove('show');
+}
+</script>
+{% endblock %}

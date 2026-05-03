@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+{% block title %}Activity Log — Jambu Store{% endblock %}
+{% block page_title %}Activity Log{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h1 class="page-h1">Activity Log</h1>
+    <p class="page-sub">Riwayat semua aktivitas dalam sistem (200 terakhir).</p>
+</div>
+
+<div class="card">
+    <div class="card-header">
+        <span>📋 Log Aktivitas ({{ logs|length }})</span>
+        <input type="text" id="searchLog" class="search-input" placeholder="Cari log...">
+    </div>
+
+    <div class="log-list full" id="logList">
+        {% if logs %}
+            {% for log in logs %}
+            <div class="log-item log-row">
+                <div class="log-avatar" style="
+                    {% if 'Login' in log.action %}background:#e8f5e9;color:#2e7d32;
+                    {% elif 'Delete' in log.action %}background:#ffebee;color:#c62828;
+                    {% elif 'Add' in log.action %}background:#e3f2fd;color:#1565c0;
+                    {% else %}background:#f3e5f5;color:#6a1b9a;{% endif %}
+                ">{{ log.username[0].upper() if log.username else '?' }}</div>
+                <div class="log-body">
+                    <div class="log-action">
+                        <strong>{{ log.username or 'System' }}</strong>
+                        <span class="log-action-badge
+                            {% if 'Login' in log.action %}badge-green
+                            {% elif 'Delete' in log.action %}badge-red
+                            {% elif 'Add' in log.action %}badge-blue
+                            {% else %}badge-purple{% endif %}">{{ log.action }}</span>
+                    </div>
+                    <div class="log-detail">{{ log.detail }}</div>
+                </div>
+                <div class="log-time mono">{{ log.created_at }}</div>
+            </div>
+            {% endfor %}
+        {% else %}
+        <div class="empty-state">
+            <span>📋</span>
+            <p>Belum ada aktivitas yang tercatat.</p>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+document.getElementById('searchLog').addEventListener('input', function() {
+    const q = this.value.toLowerCase();
+    document.querySelectorAll('.log-row').forEach(row => {
+        row.style.display = row.textContent.toLowerCase().includes(q) ? '' : 'none';
+    });
+});
+</script>
+{% endblock %}
